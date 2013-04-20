@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "myshell.h"
+#include "utility.h"
 
 #define MAX_BUFFER 1024                        // max line buffer
 #define MAX_ARGS 64                            // max # args
@@ -17,19 +17,15 @@ int main (int argc, char ** argv) {
     char * promptStart = "simpleShell~(";
     char * promptEnd = ") ==> " ;                     // shell prompt
 
-/* keep reading input until "quit" command or eof of redirected input */
+    /* Read input until "quit" */
     while (!feof(stdin)) {
 
-        int promptLen = strlen(currentDir) + strlen(promptStart) + strlen(promptEnd);
-        char *prompt = malloc(sizeof(char) * promptLen);
-        strcpy(prompt,promptStart);
-        strcat(prompt,currentDir);
-        strcat(prompt,promptEnd);
-/* get command line from input */
+        /* Write prompt to command line */
+        char *prompt = getPrompt(promptStart,promptEnd,currentDir);
+        fputs (prompt, stdout);                 // write prompt
+        free(prompt);                           // free memory that was allocated through the getPrompt function
 
-        fputs (prompt, stdout);                // write prompt
-        free(prompt);
-        if (fgets (buf, MAX_BUFFER, stdin )) { // read a line
+        if (fgets (buf, MAX_BUFFER, stdin )) {  // read a line
 
 /* tokenize the input into args array */
 
