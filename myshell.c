@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "utility.h"
+#include <stdbool.h>
 
 #define MAX_BUFFER 1024                        // max line buffer
 #define MAX_ARGS 64                            // max # args
@@ -63,6 +64,9 @@ int main (int argc, char ** argv) {
                     continue;
                 }
 
+                if(!strcmp(args[0], "dir")) {
+                    listDirectory(args,numArgs);
+                }
                 if (!strcmp(args[0],"quit")){ // "quit" command
                     break;
                 }
@@ -76,4 +80,8 @@ int main (int argc, char ** argv) {
         }
     }
     return 0;
+}
+
+void runShell(){
+
 }

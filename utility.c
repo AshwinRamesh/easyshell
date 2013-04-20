@@ -6,6 +6,7 @@
 #include "utility.h"
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <stdbool.h>
 
 extern int errno;
 
@@ -33,7 +34,7 @@ int changeDirectory(char **directory,int numArgs){
 		return 0;
 	}
 	else if (numArgs > 2) {
-		fprintf(stdout, "%s\n", "Usage: cd <Directory>");
+		fprintf(stdout, "%s\n", "Incorrect command. Usage: cd <Directory>");
 		return 0;
 	}
 	if(chdir(directory[1]) != 0) {
