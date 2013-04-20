@@ -4,6 +4,15 @@
 #include <unistd.h>
 #include <errno.h>
 #include "utility.h"
+#include <sys/wait.h>
+
+extern int errno;
+
+
+void syserr(char * msg){
+   fprintf(stderr,"%s: %s", strerror(errno), msg);
+   abort();
+}
 
 /* getPrompt - returns the full prompt message for the shell (returns char* )*/
 /* Always assign this function return to a variable so that you can free the memory */
@@ -21,6 +30,16 @@ int changeDirectory(){
 }
 
 int clearScreen(){
+	pid_t pid;
+	int status;
+	switch(pid = fork()){
+		case -1:
+			syserr("Error occured during executing command");
+		case 0:
+			execl("/bin/ls","/usr/bin/clear",(char *)NULL);
+		default:
+			waitpid(pid,&status,WUNTRACED);
+	}
 	return 0;
 }
 

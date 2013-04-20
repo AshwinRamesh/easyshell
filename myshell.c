@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
 #include "utility.h"
 
 #define MAX_BUFFER 1024                        // max line buffer
@@ -38,7 +40,7 @@ int main (int argc, char ** argv) {
 /* check for internal/external command */
 
                 if (!strcmp(args[0],"clear")) { // "clear" command
-                    system("clear");
+                    clearScreen();
                     continue;
                 }
 
