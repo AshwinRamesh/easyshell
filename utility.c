@@ -5,6 +5,7 @@
 #include <errno.h>
 #include "utility.h"
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 extern int errno;
 
@@ -16,7 +17,8 @@ void syserr(char * msg){
 
 /* getPrompt - returns the full prompt message for the shell (returns char* )*/
 /* Always assign this function return to a variable so that you can free the memory */
-char *getPrompt(char *promptStart, char *promptEnd, char *currentDir) {
+char *getPrompt(char *promptStart, char *promptEnd) {
+		char * currentDir = getenv("PWD");
         int promptLen = strlen(currentDir) + strlen(promptStart) + strlen(promptEnd);
         char *prompt = malloc(sizeof(char) * promptLen);
         strcpy(prompt,promptStart);
@@ -25,7 +27,24 @@ char *getPrompt(char *promptStart, char *promptEnd, char *currentDir) {
         return prompt;
 }
 
-int changeDirectory(){
+int changeDirectory(char **directory,int numArgs){
+	if (numArgs == 1) {
+		fprintf(stdout, "%s\n", getenv("PWD"));
+		return 0;
+	}
+	else if (numArgs > 2) {
+		fprintf(stdout, "%s\n", "Usage: cd <Directory>");
+		return 0;
+	}
+	if(chdir(directory[1]) != 0) {
+		fprintf(stdout, "%s\n", "Directory does not exist");
+		return -1;
+	}
+	else {
+		char cwd[1024];
+		getcwd(cwd,sizeof(cwd));
+		setenv("PWD",cwd,1);
+	}
 	return 0;
 }
 

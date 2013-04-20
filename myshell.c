@@ -15,11 +15,10 @@ int main (int argc, char ** argv) {
     char buf[MAX_BUFFER];                       // line buffer
     char * args[MAX_ARGS];                      // pointers to arg strings
     char ** arg;                                // working pointer thru args
-    char * currentDir = getenv("PWD");                     // current directory
     char * promptStart = "simpleShell~(";
     char * promptEnd = ") ==> " ;                     // shell prompt
     char * shellName = "myshell";
-
+    int numArgs;
     /* Set SHELL Env to myshell */
     char shellPath[MAX_BUFFER];
     getcwd(shellPath,MAX_BUFFER);
@@ -30,7 +29,7 @@ int main (int argc, char ** argv) {
     /* Read input until "quit" */
     while (!feof(stdin)) {
         /* Write prompt to command line */
-        char *prompt = getPrompt(promptStart,promptEnd,currentDir);
+        char *prompt = getPrompt(promptStart,promptEnd);
         fputs (prompt, stdout);                 // write prompt
         free(prompt);                           // free memory that was allocated through the getPrompt function
 
@@ -39,8 +38,11 @@ int main (int argc, char ** argv) {
             /* tokenize the input into args array */
             arg = args;
             *arg++ = strtok(buf,SEPARATORS);   // tokenize input
-            while ((*arg++ = strtok(NULL,SEPARATORS)));
-                                               // last entry will be NULL
+
+            numArgs = 1; // take into account for the first argument
+            while ((*arg++ = strtok(NULL,SEPARATORS))){
+                numArgs++;
+            }
 
             if (args[0]) {                     // if there's anything there
 
@@ -53,6 +55,11 @@ int main (int argc, char ** argv) {
 
                 if (!strcmp(args[0],"environ")) { // "clear" command
                     listEnvironmentVars(environ);
+                    continue;
+                }
+
+                if(!strcmp(args[0],"cd")) { // "cd" command
+                    changeDirectory(args,numArgs);
                     continue;
                 }
 
