@@ -36,7 +36,7 @@ int clearScreen(){
 		case -1:
 			syserr("Error occured during executing command");
 		case 0:
-			execl("/bin/ls","/usr/bin/clear",(char *)NULL);
+			execl("/usr/bin/clear","clear",(char *)NULL);
 		default:
 			waitpid(pid,&status,WUNTRACED);
 	}
@@ -47,7 +47,11 @@ int listDirectory(){
 	return 0;
 }
 
-int listEnvironmentVars(){
+int listEnvironmentVars(char **environ){
+	int i;
+	for (i = 0; environ[i] != NULL; i++) {
+		fprintf(stdout,"%s\n",environ[i]);
+	}
 	return 0;
 }
 
@@ -60,10 +64,6 @@ int help(){
 }
 
 int pause(){
-	return 0;
-}
-
-int quit(){
 	return 0;
 }
 

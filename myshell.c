@@ -18,10 +18,17 @@ int main (int argc, char ** argv) {
     char * currentDir = getenv("PWD");                     // current directory
     char * promptStart = "simpleShell~(";
     char * promptEnd = ") ==> " ;                     // shell prompt
-    //char * shellName = "myshell";
+    char * shellName = "myshell";
+
+    /* Set SHELL Env to myshell */
+    char shellPath[MAX_BUFFER];
+    getcwd(shellPath,MAX_BUFFER);
+    strcat(shellPath,"/");
+    strcat(shellPath,shellName);
+    setenv("SHELL",shellPath,1);
+
     /* Read input until "quit" */
     while (!feof(stdin)) {
-
         /* Write prompt to command line */
         char *prompt = getPrompt(promptStart,promptEnd,currentDir);
         fputs (prompt, stdout);                 // write prompt
@@ -44,8 +51,14 @@ int main (int argc, char ** argv) {
                     continue;
                 }
 
-                if (!strcmp(args[0],"quit"))   // "quit" command
-                    break;                     // break out of 'while' loop
+                if (!strcmp(args[0],"environ")) { // "clear" command
+                    listEnvironmentVars(environ);
+                    continue;
+                }
+
+                if (!strcmp(args[0],"quit")){ // "quit" command
+                    break;
+                }
 
 /* else pass command onto OS (or in this instance, print them out) */
 

@@ -4,5 +4,7 @@ extern int errno;
 void syserr(char *msg);
 char *getPrompt(char* promptStart, char* promptEnd, char* currentDir);
 int clearScreen();
+int listEnvironmentVars(char **environ);
+int quitShell();
 
 #endif
