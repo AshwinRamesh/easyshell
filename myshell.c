@@ -16,7 +16,7 @@ int main (int argc, char ** argv) {
     char * currentDir = getenv("PWD");                     // current directory
     char * promptStart = "simpleShell~(";
     char * promptEnd = ") ==> " ;                     // shell prompt
-
+    //char * shellName = "myshell";
     /* Read input until "quit" */
     while (!feof(stdin)) {
 
@@ -27,8 +27,7 @@ int main (int argc, char ** argv) {
 
         if (fgets (buf, MAX_BUFFER, stdin )) {  // read a line
 
-/* tokenize the input into args array */
-
+            /* tokenize the input into args array */
             arg = args;
             *arg++ = strtok(buf,SEPARATORS);   // tokenize input
             while ((*arg++ = strtok(NULL,SEPARATORS)));

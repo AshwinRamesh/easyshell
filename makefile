@@ -3,5 +3,5 @@
 # Assignment 1- A Simple Shell
 # UOS: COMP3520 - Operating SYstem Internals
 
-myshell: myshell.c utility.c myshell.h
+myshell: myshell.c utility.c utility.h
 		gcc -Wall myshell.c utility.c -o myshell
