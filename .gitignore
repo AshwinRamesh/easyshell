@@ -1,3 +1,4 @@
 myshell
 *.a
 *.o
+test.c

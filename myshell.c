@@ -18,6 +18,7 @@ int main (int argc, char ** argv) {
     char * promptStart = "simpleShell~(";
     char * promptEnd = ") ==> " ;                     // shell prompt
     char * shellName = "myshell";
+    char * startingDir = getenv("PWD");
     int numArgs;
     /* Set SHELL Env to myshell */
     char shellPath[MAX_BUFFER];
@@ -60,6 +61,21 @@ int main (int argc, char ** argv) {
 
                 if(!strcmp(args[0],"cd")) { // "cd" command
                     changeDirectory(args,numArgs);
+                    continue;
+                }
+
+                if(!strcmp(args[0],"dir")) { // "dir" command
+                    listDirectory(args,numArgs);
+                    continue;
+                }
+
+                if(!strcmp(args[0],"help")) { // "help" command
+                    help(startingDir);
+                    continue;
+                }
+
+                if(!strcmp(args[0],"echo")) { // "echo" command
+                    echo(args,numArgs);
                     continue;
                 }
 
