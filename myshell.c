@@ -75,7 +75,12 @@ int main (int argc, char ** argv) {
                 }
 
                 if(!strcmp(args[0],"echo")) { // "echo" command
-                    echo(args,numArgs);
+                    echoString(args,numArgs);
+                    continue;
+                }
+
+                if(!strcmp(args[0],"pause")) { // "pause" command
+                    pauseShell(numArgs);
                     continue;
                 }
 

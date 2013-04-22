@@ -7,7 +7,8 @@ int changeDirectory(char ** directory,int numArgs);
 int clearScreen();
 int listDirectory(char **directory,int numArgs);
 int listEnvironmentVars(char **environ);
-int echo(char **args,int numArgs) ;
+int echoString(char **args,int numArgs) ;
+int pauseShell(int numArgs);
 int help(char * dir);
 int quitShell();
 

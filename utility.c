@@ -89,7 +89,7 @@ int listEnvironmentVars(char **environ){
     return 0;
 }
 
-int echo(char **args,int numArgs) {
+int echoString(char **args,int numArgs) {
     pid_t pid;
     int status;
     if(numArgs == 1) { // no echo args
@@ -132,7 +132,18 @@ int help(char * dir){
     return 0;
 }
 
-int pause(){
+int pauseShell(int numArgs){ // fix this so that it does not show the non ENTER keys
+    if (numArgs != 1) {
+        printf("%s\n", "Usage: pause");
+        return -1;
+    }
+    int c = 0;
+    fprintf(stdout, "%s\n", "Press ENTER to continue...");
+    while ((c = getchar())) {
+        if (c == '\n' || c== EOF) {
+            return 0;
+        }
+    }
     return 0;
 }
 
