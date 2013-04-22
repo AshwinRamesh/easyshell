@@ -132,7 +132,7 @@ int help(char * dir){
     return 0;
 }
 
-int pauseShell(int numArgs){ // fix this so that it does not show the non ENTER keys
+int pauseShell(int numArgs){ // fix this so that it does not show the non ENTER keys http://stackoverflow.com/posts/1798833/revisions
     if (numArgs != 1) {
         printf("%s\n", "Usage: pause");
         return -1;
