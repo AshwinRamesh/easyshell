@@ -6,6 +6,7 @@
 #include "utility.h"
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <termios.h>
 
 extern int errno;
 
@@ -137,10 +138,17 @@ int pauseShell(int numArgs){ // fix this so that it does not show the non ENTER 
         printf("%s\n", "Usage: pause");
         return -1;
     }
+    static struct termios oldt, newt;
+    tcgetattr(STDIN_FILENO,&oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
     int c = 0;
     fprintf(stdout, "%s\n", "Press ENTER to continue...");
     while ((c = getchar())) {
         if (c == '\n' || c== EOF) {
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
             return 0;
         }
     }

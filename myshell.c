@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "utility.h"
+#include <termios.h>
 
 #define MAX_BUFFER 1024                        // max line buffer
 #define MAX_ARGS 64                            // max # args
