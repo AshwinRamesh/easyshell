@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
-#include "utility.h"
 #include "input.h"
+#include "utility.h"
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <termios.h>
@@ -50,9 +50,12 @@ int changeDirectory(char **directory,int numArgs){
     return 0;
 }
 
-int clearScreen(){
+int clearScreen(struct inputStruct * tempInput){
     pid_t pid;
     int status;
+    if (tempInput->correctFormat == 0) {
+        fprintf(stdout, "%s\n", "ERROR IN CLEAR");
+    }
     switch(pid = fork()){
         case -1:
             syserr("Error occured during executing command");

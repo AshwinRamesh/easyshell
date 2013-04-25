@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
-#include "utility.h"
 #include "input.h"
+#include "utility.h"
 #include <termios.h>
 
 #define MAX_BUFFER 1024                        // max line buffer
@@ -54,7 +54,7 @@ int main (int argc, char ** argv) {
 
 /* check for internal/external command */
                 if (!strcmp(userInput->command,"clear")) { // "clear" command
-                    clearScreen();
+                    clearScreen(userInput);
                     continue;
                 }
                 else if (!strcmp(userInput->command,"environ")) { // "clear" command
