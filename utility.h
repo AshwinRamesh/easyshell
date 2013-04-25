@@ -3,13 +3,12 @@
 extern int errno;
 void syserr(char *msg);
 char *getPrompt(char* promptStart, char* promptEnd);
-int changeDirectory(char ** directory,int numArgs);
+int changeDirectory(struct inputStruct * tempInput);
 int clearScreen(struct inputStruct * tempInput);
-int listDirectory(char **directory,int numArgs);
-int listEnvironmentVars(char **environ);
-int echoString(char **args,int numArgs) ;
-int pauseShell(int numArgs);
-int help(char * dir);
-int quitShell();
-
+int listDirectory(struct inputStruct * tempInput);
+int listEnvironmentVars(char **environ,struct inputStruct * tempInput);
+int echoString(struct inputStruct * tempInput) ;
+int pauseShell(struct inputStruct * tempInput);
+int help(char * dir,struct inputStruct * tempInput);
+int externalCommand(struct inputStruct * tempInput);
 #endif

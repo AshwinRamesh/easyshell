@@ -23,6 +23,7 @@ struct inputStruct * parseInput(char ** args, int numArgs) {
     initialiseInputStruct(tempInput);
     int i;
     tempInput->command = args[0];
+    tempInput->commandAndArgs[0] = &args[0];
     for (i=1; i < numArgs; i++) {
         if (!strcmp(args[i],">")){
                 if (i == numArgs - 1) { // last argument to be read. means that format is wrong
@@ -80,6 +81,7 @@ struct inputStruct * parseInput(char ** args, int numArgs) {
                     return tempInput;
                 }
                 tempInput->args[tempInput->numArgs] = &args[i];
+                tempInput->commandAndArgs[tempInput->numArgs + 1] = &args[i]; // increment to consolodate for command being array[0] element
                 tempInput->numArgs = tempInput->numArgs + 1;
         }
     }

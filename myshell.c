@@ -50,7 +50,7 @@ int main (int argc, char ** argv) {
             if (args[0]) {                     // if there's anything there
                 struct inputStruct * userInput;
                 userInput = parseInput(args,numArgs);
-                fprintf(stdout, "Command: %s\n", userInput->command);
+                fprintf(stdout, "Command: %s Correct Format: %d Input: %d Output: %d Background: %d\n", userInput->command,userInput->correctFormat, userInput->inputRedir, userInput->outputRedir, userInput->backgroundExec);
 
 /* check for internal/external command */
                 if (!strcmp(userInput->command,"clear")) { // "clear" command
@@ -58,36 +58,43 @@ int main (int argc, char ** argv) {
                     continue;
                 }
                 else if (!strcmp(userInput->command,"environ")) { // "clear" command
-                    listEnvironmentVars(environ);
+                    listEnvironmentVars(environ,userInput);
                     continue;
                 }
                 else if(!strcmp(userInput->command,"cd")) { // "cd" command
-                    changeDirectory(args,numArgs);
+                    changeDirectory(userInput);
                     continue;
                 }
                 else if(!strcmp(userInput->command,"dir")) { // "dir" command
-                    listDirectory(args,numArgs);
+                    listDirectory(userInput);
                     continue;
                 }
                 else if(!strcmp(userInput->command,"help")) { // "help" command
-                    help(startingDir);
+                    help(startingDir,userInput);
                     continue;
                 }
                 else if(!strcmp(userInput->command,"echo")) { // "echo" command
-                    echoString(args,numArgs);
+                    echoString(userInput);
                     continue;
                 }
                 else if(!strcmp(userInput->command,"pause")) { // "pause" command
-                    pauseShell(numArgs);
+                    pauseShell(userInput);
                     continue;
                 }
                 else if (!strcmp(userInput->command,"quit")){ // "quit" command
-                    break;
+                    if (userInput->correctFormat == 0  || userInput->numArgs > 0 || userInput->inputRedir != 0  || userInput->outputRedir != 0 || userInput->backgroundExec == 1) {
+                        fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <quit>");
+                        continue;
+                    }
+                    else {
+                        break;
+                    }
                 }
                 else { // other commands
-                    arg = args;
-                    while (*arg) fprintf(stdout,"%s ",*arg++);
-                    fputs ("\n", stdout);
+                    externalCommand(userInput);
+                    //arg = args;
+                    //while (*arg) fprintf(stdout,"%s ",*arg++);
+                    //fputs ("\n", stdout);
                 }
                 free(userInput);
             }

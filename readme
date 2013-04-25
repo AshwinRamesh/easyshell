@@ -31,7 +31,7 @@ Syntax: <cd> [args]
 ---------------------------
 Lists the contents of a given directory
 
-Syntax: <dir> <arg1> [arg2 ... argN] [>|>> outputArg]
+Syntax: <dir> <arg1> [>|>> outputArg]
 
 * Env Variables <environ>
 ---------------------------
