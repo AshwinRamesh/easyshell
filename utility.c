@@ -122,13 +122,31 @@ int listDirectory(struct inputStruct * tempInput){
         - No Backgroud Exec
 */
 int listEnvironmentVars(char **environ,struct inputStruct * tempInput){
+    FILE * outputFile;
     if(tempInput->correctFormat == 0 || tempInput->numArgs != 0 || tempInput->inputRedir != 0  || tempInput->backgroundExec == 1) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <dir> <arg1> [>|>> outputArg]");
         return -1;
     }
     int i;
+    // Open output file for writing
+    if (tempInput->outputRedir == 1) {
+        outputFile = fopen(tempInput->outputArg,"w+");
+    }
+    else if (tempInput->outputRedir == 2) {
+        outputFile = fopen(tempInput->outputArg,"a+");
+    }
+    // Iterate through environ vars
     for (i = 0; environ[i] != NULL; i++) {
-        fprintf(stdout,"%s\n",environ[i]);
+        if (tempInput->outputRedir != 0) {
+            fprintf(outputFile,"%s\n",environ[i]);
+        }
+        else {
+            fprintf(stdout, "%s\n", environ[i]);
+        }
+    }
+    // Close output file if required
+    if (tempInput->outputRedir != 0) {
+        fclose(outputFile);
     }
     return 0;
 }
@@ -152,6 +170,12 @@ int echoString(struct inputStruct * tempInput) {
             case -1:
                 syserr("Error occured during executing command");
             case 0:
+                if (tempInput->outputRedir == 1) {
+                    freopen(tempInput->outputArg, "w+", stdout);
+                }
+                else if (tempInput->outputRedir == 2) {
+                    freopen(tempInput->outputArg, "a+", stdout);
+                }
                 execl("/bin/echo","echo",(char *)NULL);
             default:
                 waitpid(pid,&status,WUNTRACED);
@@ -163,6 +187,12 @@ int echoString(struct inputStruct * tempInput) {
         case -1:
             syserr("Error occured during executing command");
         case 0:
+            if (tempInput->outputRedir == 1) {
+                freopen(tempInput->outputArg, "w+", stdout);
+            }
+            else if (tempInput->outputRedir == 2) {
+                freopen(tempInput->outputArg, "a+", stdout);
+            }
             execv("/bin/echo",*tempInput->commandAndArgs);
         default:
             waitpid(pid,&status,WUNTRACED);
