@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "utility.h"
+#include "input.h"
 #include <termios.h>
 
 #define MAX_BUFFER 1024                        // max line buffer
@@ -47,53 +48,48 @@ int main (int argc, char ** argv) {
             }
 
             if (args[0]) {                     // if there's anything there
+                struct inputStruct * userInput;
+                userInput = parseInput(args,numArgs);
+                fprintf(stdout, "Command: %s\n", userInput->command);
 
 /* check for internal/external command */
-
-                if (!strcmp(args[0],"clear")) { // "clear" command
+                if (!strcmp(userInput->command,"clear")) { // "clear" command
                     clearScreen();
                     continue;
                 }
-
-                if (!strcmp(args[0],"environ")) { // "clear" command
+                else if (!strcmp(userInput->command,"environ")) { // "clear" command
                     listEnvironmentVars(environ);
                     continue;
                 }
-
-                if(!strcmp(args[0],"cd")) { // "cd" command
+                else if(!strcmp(userInput->command,"cd")) { // "cd" command
                     changeDirectory(args,numArgs);
                     continue;
                 }
-
-                if(!strcmp(args[0],"dir")) { // "dir" command
+                else if(!strcmp(userInput->command,"dir")) { // "dir" command
                     listDirectory(args,numArgs);
                     continue;
                 }
-
-                if(!strcmp(args[0],"help")) { // "help" command
+                else if(!strcmp(userInput->command,"help")) { // "help" command
                     help(startingDir);
                     continue;
                 }
-
-                if(!strcmp(args[0],"echo")) { // "echo" command
+                else if(!strcmp(userInput->command,"echo")) { // "echo" command
                     echoString(args,numArgs);
                     continue;
                 }
-
-                if(!strcmp(args[0],"pause")) { // "pause" command
+                else if(!strcmp(userInput->command,"pause")) { // "pause" command
                     pauseShell(numArgs);
                     continue;
                 }
-
-                if (!strcmp(args[0],"quit")){ // "quit" command
+                else if (!strcmp(userInput->command,"quit")){ // "quit" command
                     break;
                 }
-
-/* else pass command onto OS (or in this instance, print them out) */
-
-                arg = args;
-                while (*arg) fprintf(stdout,"%s ",*arg++);
-                fputs ("\n", stdout);
+                else { // other commands
+                    arg = args;
+                    while (*arg) fprintf(stdout,"%s ",*arg++);
+                    fputs ("\n", stdout);
+                }
+                free(userInput);
             }
         }
     }
