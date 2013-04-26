@@ -193,7 +193,7 @@ int echoString(struct inputStruct * tempInput) {
             else if (tempInput->outputRedir == 2) {
                 freopen(tempInput->outputArg, "a+", stdout);
             }
-            execv("/bin/echo",*tempInput->commandAndArgs);
+            execv("/bin/echo",tempInput->commandAndArgs);
         default:
             waitpid(pid,&status,WUNTRACED);
     }
@@ -221,6 +221,12 @@ int help(char * dir,struct inputStruct * tempInput){
         case -1:
             syserr("Error occured during executing command");
         case 0:
+            if (tempInput->outputRedir == 1) {
+                freopen(tempInput->outputArg, "w+", stdout);
+            }
+            else if (tempInput->outputRedir == 2) {
+                freopen(tempInput->outputArg, "a+", stdout);
+            }
             execl("/bin/more","more",readme,(char *)NULL);
         default:
             waitpid(pid,&status,WUNTRACED);
