@@ -305,7 +305,9 @@ int externalCommand(struct inputStruct * tempInput) {
             }
             execvp(tempInput->commandAndArgs[0],tempInput->commandAndArgs);
         default:
-            waitpid(pid,&status,WUNTRACED);
+            if ( tempInput->backgroundExec == 0) { // background execge
+                waitpid(pid,&status,WUNTRACED);
+            }
     }
     return 0;
 }
