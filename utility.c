@@ -310,7 +310,10 @@ int externalCommand(struct inputStruct * tempInput) {
             if (tempInput->inputRedir == 1) { // input redirection
                 freopen(tempInput->inputArg, "r", stdin);
             }
-            execvp(tempInput->commandAndArgs[0],tempInput->commandAndArgs);
+            if (execvp(tempInput->commandAndArgs[0],tempInput->commandAndArgs) == -1) {
+                fprintf(stdout, "%s\n", "Command not found.");
+                _exit(EXIT_FAILURE);
+            }
         default:
             if ( tempInput->backgroundExec == 0) { // background execge
                 waitpid(pid,&status,WUNTRACED);
