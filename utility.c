@@ -292,6 +292,10 @@ int externalCommand(struct inputStruct * tempInput) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <command> [arg1 arg2 ... argN] [< inputArg] [>|>> outputArg] [&]");
         return -1;
     }
+    if (tempInput->inputRedir == 1 && access(tempInput->inputArg,R_OK) != 0) {
+        fprintf(stdout, "%s\n", "Input file cannot be accessed or does not exist.");
+        return -1;
+    }
     switch(pid = fork()){
         case -1:
             syserr("Error occured during executing command");
@@ -302,6 +306,9 @@ int externalCommand(struct inputStruct * tempInput) {
             }
             else if (tempInput->outputRedir == 2) {
                 freopen(tempInput->outputArg, "a+", stdout);
+            }
+            if (tempInput->inputRedir == 1) { // input redirection
+                freopen(tempInput->inputArg, "r", stdin);
             }
             execvp(tempInput->commandAndArgs[0],tempInput->commandAndArgs);
         default:

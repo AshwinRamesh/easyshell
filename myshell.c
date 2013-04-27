@@ -28,7 +28,7 @@ int main (int argc, char ** argv) {
     getcwd(shellPath,MAX_BUFFER);
     strcat(shellPath,"/");
     strcat(shellPath,shellName);
-    setenv("SHELL",shellPath,1);
+    setenv("shell",shellPath,1);
 
     if (argc > 2) {
         fprintf(stdout, "%s\n", "Too many arguments. Syntax: myshell [batchfile]");
@@ -68,7 +68,7 @@ int main (int argc, char ** argv) {
             if (args[0]) {                     // if there's anything there
                 struct inputStruct * userInput;
                 userInput = parseInput(args,numArgs);
-//                fprintf(stdout, "Command: %s Correct Format: %d Input: %d Output: %d Background: %d\n", userInput->command,userInput->correctFormat, userInput->inputRedir, userInput->outputRedir, userInput->backgroundExec);
+                //fprintf(stdout, "Command: %s Correct Format: %d Input: %d Output: %d Background: %d\n", userInput->command,userInput->correctFormat, userInput->inputRedir, userInput->outputRedir, userInput->backgroundExec);
 
 /* check for internal/external command */
                 if (!strcmp(userInput->command,"clear")) { // "clear" command
