@@ -18,7 +18,7 @@ void syserr(char * msg){
 }
 
 void set_child_parent(){
-    setenv("parent", getenv("SHELL"), 1);
+    setenv("parent", getenv("shell"), 1);
 }
 
 void exit_signals(int signal) {
@@ -84,6 +84,7 @@ int clearScreen(struct inputStruct * tempInput){
         case -1:
             syserr("Error occured during executing command");
         case 0:
+            set_child_parent();
             execl("/usr/bin/clear","clear",(char *)NULL);
         default:
             waitpid(pid,&status,WUNTRACED);
@@ -110,6 +111,7 @@ int listDirectory(struct inputStruct * tempInput){
             syserr("Error occured during executing command");
             return -1;
         case 0:
+            set_child_parent();
             if (tempInput->outputRedir == 1) {
                 freopen(tempInput->outputArg, "w+", stdout);
             }
@@ -179,6 +181,7 @@ int echoString(struct inputStruct * tempInput) {
             case -1:
                 syserr("Error occured during executing command");
             case 0:
+                set_child_parent();
                 if (tempInput->outputRedir == 1) {
                     freopen(tempInput->outputArg, "w+", stdout);
                 }
@@ -196,6 +199,7 @@ int echoString(struct inputStruct * tempInput) {
         case -1:
             syserr("Error occured during executing command");
         case 0:
+            set_child_parent();
             if (tempInput->outputRedir == 1) {
                 freopen(tempInput->outputArg, "w+", stdout);
             }
@@ -230,6 +234,7 @@ int help(char * dir,struct inputStruct * tempInput){
         case -1:
             syserr("Error occured during executing command");
         case 0:
+            set_child_parent();
             if (tempInput->outputRedir == 1) {
                 freopen(tempInput->outputArg, "w+", stdout);
             }
@@ -291,6 +296,7 @@ int externalCommand(struct inputStruct * tempInput) {
         case -1:
             syserr("Error occured during executing command");
         case 0:
+            set_child_parent();
             if (tempInput->outputRedir == 1) {
                 freopen(tempInput->outputArg, "w+", stdout);
             }
