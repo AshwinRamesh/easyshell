@@ -21,6 +21,11 @@ void set_child_parent(){
     setenv("parent", getenv("SHELL"), 1);
 }
 
+void exit_signals(int signal) {
+    printf("\nIllegal Operation. Press \"Enter\" to continue. To exit the shell use the \"quit\" command.\n");
+    return;
+}
+
 /* getPrompt - returns the full prompt message for the shell (returns char* )*/
 /* Always assign this function return to a variable so that you can free the memory */
 char *getPrompt(char *promptStart, char *promptEnd) {
@@ -276,10 +281,25 @@ int pauseShell(struct inputStruct * tempInput){ // fix this so that it does not 
         - YES Backgroud Exec
 */
 int externalCommand(struct inputStruct * tempInput) {
+    pid_t pid;
+    int status;
     if (tempInput->correctFormat == 0) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <command> [arg1 arg2 ... argN] [< inputArg] [>|>> outputArg] [&]");
         return -1;
     }
-   fprintf(stdout, "%s\n", "This external command function has not been written yet");
+    switch(pid = fork()){
+        case -1:
+            syserr("Error occured during executing command");
+        case 0:
+            if (tempInput->outputRedir == 1) {
+                freopen(tempInput->outputArg, "w+", stdout);
+            }
+            else if (tempInput->outputRedir == 2) {
+                freopen(tempInput->outputArg, "a+", stdout);
+            }
+            execvp(tempInput->commandAndArgs[0],tempInput->commandAndArgs);
+        default:
+            waitpid(pid,&status,WUNTRACED);
+    }
     return 0;
 }

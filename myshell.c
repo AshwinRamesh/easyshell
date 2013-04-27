@@ -6,6 +6,7 @@
 #include "input.h"
 #include "utility.h"
 #include <termios.h>
+#include <signal.h>
 
 #define MAX_BUFFER 1024                        // max line buffer
 #define MAX_ARGS 64                            // max # args
@@ -35,6 +36,8 @@ int main (int argc, char ** argv) {
         char *prompt = getPrompt(promptStart,promptEnd);
         fputs (prompt, stdout);                 // write prompt
         free(prompt);                           // free memory that was allocated through the getPrompt function
+
+        if (signal(SIGINT, exit_signals));// Escape all signals
 
         if (fgets (buf, MAX_BUFFER, stdin )) {  // read a line
 

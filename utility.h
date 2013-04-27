@@ -3,6 +3,7 @@
 extern int errno;
 void set_child_parent();
 void syserr(char *msg);
+void exit_signals(int signal);
 char *getPrompt(char* promptStart, char* promptEnd);
 int changeDirectory(struct inputStruct * tempInput);
 int clearScreen(struct inputStruct * tempInput);
