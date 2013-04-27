@@ -30,12 +30,27 @@ int main (int argc, char ** argv) {
     strcat(shellPath,shellName);
     setenv("SHELL",shellPath,1);
 
+    if (argc > 2) {
+        fprintf(stdout, "%s\n", "Too many arguments. Syntax: myshell [batchfile]");
+        return -1; // too many args
+    }
+    else if (argc == 2) {
+        if (access(argv[1],R_OK) == 0) { // check if the file exists
+            freopen(argv[1], "r", stdin);
+        }
+        else {
+            fprintf(stdout, "%s\n", "File cannot be opened or does not exist.");
+            return -1;
+        }
+    }
     /* Read input until "quit" */
     while (!feof(stdin)) {
         /* Write prompt to command line */
-        char *prompt = getPrompt(promptStart,promptEnd);
-        fputs (prompt, stdout);                 // write prompt
-        free(prompt);                           // free memory that was allocated through the getPrompt function
+        if (argc == 1) { // if there is a batch file then don't print the prompt
+            char *prompt = getPrompt(promptStart,promptEnd);
+            fputs (prompt, stdout);                 // write prompt
+            free(prompt);                           // free memory that was allocated through the getPrompt function
+        }
 
         if (signal(SIGINT, exit_signals));// Escape all signals
 
