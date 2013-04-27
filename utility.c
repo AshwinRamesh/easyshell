@@ -17,6 +17,10 @@ void syserr(char * msg){
    abort();
 }
 
+void set_child_parent(){
+    setenv("parent", getenv("SHELL"), 1);
+}
+
 /* getPrompt - returns the full prompt message for the shell (returns char* )*/
 /* Always assign this function return to a variable so that you can free the memory */
 char *getPrompt(char *promptStart, char *promptEnd) {

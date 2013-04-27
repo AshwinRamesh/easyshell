@@ -1,6 +1,7 @@
 #ifndef UTILITY_H_INCLUDED
 #define UTILITY_H_INCLUDED
 extern int errno;
+void set_child_parent();
 void syserr(char *msg);
 char *getPrompt(char* promptStart, char* promptEnd);
 int changeDirectory(struct inputStruct * tempInput);
