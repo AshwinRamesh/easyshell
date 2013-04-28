@@ -19,29 +19,34 @@ int main (int argc, char ** argv) {
     char ** arg;                                // working pointer thru args
     char * promptStart = "simpleShell~(";
     char * promptEnd = ") ==> " ;                     // shell prompt
-    char * shellName = "myshell";
-    char * startingDir = getenv("PWD");
-    int numArgs;
+    char * shellName = "myshell"; // the shell name
+    char * startingDir = getenv("PWD"); // current directory
+    int numArgs; // variable to count how many args are in each command given to shell
+
     /* Set SHELL Env to myshell */
     char shellPath[MAX_BUFFER];
     getcwd(shellPath,MAX_BUFFER);
     strcat(shellPath,"/");
     strcat(shellPath,shellName);
     setenv("shell",shellPath,1);
+    /**************************/
 
-    if (argc > 2) {
+/* Check what type of shell we will run -> batch vs. normal */
+    if (argc > 2) { // ensure there is only one argument with the myshell command
         fprintf(stdout, "%s\n", "Too many arguments. Syntax: myshell [batchfile]");
         return -1; // too many args
     }
-    else if (argc == 2) {
+    else if (argc == 2) { // batch file execution
         if (access(argv[1],R_OK) == 0) { // check if the file exists
             freopen(argv[1], "r", stdin);
         }
-        else {
+        else { // normal myshell execution
             fprintf(stdout, "%s\n", "File cannot be opened or does not exist.");
             return -1;
         }
     }
+/********************************************************/
+
     /* Read input until "quit" */
     while (!feof(stdin)) {
         /* Write prompt to command line */
@@ -51,7 +56,7 @@ int main (int argc, char ** argv) {
             free(prompt);                           // free memory that was allocated through the getPrompt function
         }
 
-        if (signal(SIGINT, exit_signals));// Escape all signals
+        if (signal(SIGINT, exit_signals));// Escape all signals ctrl+C etc.
 
         if (fgets (buf, MAX_BUFFER, stdin )) {  // read a line
 
@@ -109,11 +114,8 @@ int main (int argc, char ** argv) {
                 }
                 else { // other commands
                     externalCommand(userInput);
-                    //arg = args;
-                    //while (*arg) fprintf(stdout,"%s ",*arg++);
-                    //fputs ("\n", stdout);
                 }
-                free(userInput);
+                free(userInput); // free the memory allocated to the parsing struct
             }
         }
     }

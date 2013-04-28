@@ -9,18 +9,18 @@
 #include <sys/stat.h>
 #include <termios.h>
 
-extern int errno;
-
-
+// system error function
 void syserr(char * msg){
    fprintf(stderr,"%s: %s", strerror(errno), msg);
    abort();
 }
 
+// set the parent of a child process to myshell
 void set_child_parent(){
     setenv("parent", getenv("shell"), 1);
 }
 
+// function to escape exit signals
 void exit_signals(int signal) {
     printf("\nIllegal Operation. Press \"Enter\" to continue. To exit the shell use the \"quit\" command.\n");
     return;
@@ -46,18 +46,22 @@ char *getPrompt(char *promptStart, char *promptEnd) {
         - No Backgroud Exec
 */
 int changeDirectory(struct inputStruct * tempInput){
+    // check for illegal formats
     if(tempInput->correctFormat == 0 || tempInput->numArgs > 1 || tempInput->inputRedir != 0 || tempInput->outputRedir != 0 || tempInput->backgroundExec ==1) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <cd> [arg1]");
         return -1;
     }
+    // print current dir
     if (tempInput->numArgs == 0) {
         fprintf(stdout, "%s\n", getenv("PWD"));
         return 0;
     }
+    // directory doesnt exist
     if(chdir(*tempInput->args[0]) != 0) {
         fprintf(stdout, "%s\n", "Directory does not exist");
         return -1;
     }
+    // directory exists. change env PWD
     else {
         char cwd[1024];
         getcwd(cwd,sizeof(cwd));
@@ -76,6 +80,7 @@ int changeDirectory(struct inputStruct * tempInput){
 int clearScreen(struct inputStruct * tempInput){
     pid_t pid;
     int status;
+    //check for illegal format
     if (tempInput->correctFormat == 0 || tempInput->numArgs > 0 || tempInput->inputRedir != 0 || tempInput->outputRedir != 0 || tempInput->backgroundExec == 1) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <clear>");
         return -1;
@@ -102,6 +107,7 @@ int clearScreen(struct inputStruct * tempInput){
 int listDirectory(struct inputStruct * tempInput){
     pid_t pid;
     int status;
+    //check for illegal format
     if(tempInput->correctFormat == 0 || tempInput->numArgs != 1 || tempInput->inputRedir != 0 || tempInput->backgroundExec ==1 ) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <dir> <arg1> [>|>> outputArg]");
         return -1;
@@ -112,6 +118,7 @@ int listDirectory(struct inputStruct * tempInput){
             return -1;
         case 0:
             set_child_parent();
+            // check for type of output redirection
             if (tempInput->outputRedir == 1) {
                 freopen(tempInput->outputArg, "w+", stdout);
             }
@@ -134,12 +141,13 @@ int listDirectory(struct inputStruct * tempInput){
 */
 int listEnvironmentVars(char **environ,struct inputStruct * tempInput){
     FILE * outputFile;
+    // check for illegal format
     if(tempInput->correctFormat == 0 || tempInput->numArgs != 0 || tempInput->inputRedir != 0  || tempInput->backgroundExec == 1) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <dir> <arg1> [>|>> outputArg]");
         return -1;
     }
     int i;
-    // Open output file for writing
+    // Open output file for writing. Check for type of output redir
     if (tempInput->outputRedir == 1) {
         outputFile = fopen(tempInput->outputArg,"w+");
     }
@@ -172,10 +180,12 @@ int listEnvironmentVars(char **environ,struct inputStruct * tempInput){
 int echoString(struct inputStruct * tempInput) {
     pid_t pid;
     int status;
+    //check for illegal format
     if(tempInput->correctFormat == 0  || tempInput->inputRedir != 0  || tempInput->backgroundExec == 1) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <echo> [arg1 ... argN] [>|>> outputArg]");
         return -1;
     }
+    // no args given
     if(tempInput->numArgs == 0) { // no echo args
         switch(pid = fork()){
             case -1:
@@ -200,6 +210,7 @@ int echoString(struct inputStruct * tempInput) {
             syserr("Error occured during executing command");
         case 0:
             set_child_parent();
+            // check for type of output redir
             if (tempInput->outputRedir == 1) {
                 freopen(tempInput->outputArg, "w+", stdout);
             }
@@ -223,18 +234,22 @@ int echoString(struct inputStruct * tempInput) {
 int help(char * dir,struct inputStruct * tempInput){
     pid_t pid;
     int status;
+    // check for illegal format
     if(tempInput->correctFormat == 0  || tempInput->numArgs > 0 || tempInput->inputRedir != 0  || tempInput->backgroundExec == 1) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <help>  [>|>> outputArg]");
         return -1;
     }
+    // allocate memory for readme directory
     char * readme = malloc((sizeof(char) * strlen(dir)) + strlen("/readme"));
     strcpy(readme,dir);
     strcat(readme,"/readme");
+    //fprintf(stdout, "%s\n", readme);
     switch(pid = fork()){
         case -1:
             syserr("Error occured during executing command");
         case 0:
             set_child_parent();
+            // check for output redir type
             if (tempInput->outputRedir == 1) {
                 freopen(tempInput->outputArg, "w+", stdout);
             }
@@ -257,21 +272,23 @@ int help(char * dir,struct inputStruct * tempInput){
         - No Backgroud Exec
 */
 int pauseShell(struct inputStruct * tempInput){ // fix this so that it does not show the non ENTER keys http://stackoverflow.com/posts/1798833/revisions
+    // check for illegal format
     if(tempInput->correctFormat == 0  || tempInput->numArgs > 0 || tempInput->inputRedir != 0  || tempInput->outputRedir != 0 || tempInput->backgroundExec == 1) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <help>  [>|>> outputArg]");
         return -1;
     }
-    static struct termios oldt, newt;
-    tcgetattr(STDIN_FILENO,&oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    // pause the shell
+    static struct termios oldt, newt; // define structs
+    tcgetattr(STDIN_FILENO,&oldt); // get the attributes of current shell and place in oldt
+    newt = oldt; // make newt the same as oldt
+    newt.c_lflag &= ~(ICANON | ECHO); // change part of newt which controls output to false
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt); // set these attributes for newt
 
     int c = 0;
     fprintf(stdout, "%s\n", "Press ENTER to continue...");
-    while ((c = getchar())) {
-        if (c == '\n' || c== EOF) {
-            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    while ((c = getchar())) { // check for character input
+        if (c == '\n' || c== EOF) { // check if it is EOF or ENTER is pressed
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // make terminal back to oldt self
             return 0;
         }
     }
@@ -288,10 +305,12 @@ int pauseShell(struct inputStruct * tempInput){ // fix this so that it does not 
 int externalCommand(struct inputStruct * tempInput) {
     pid_t pid;
     int status;
+    // check for illegal commands
     if (tempInput->correctFormat == 0) {
         fprintf(stdout, "%s\n", "Command cannot be parsed. Usage: <command> [arg1 arg2 ... argN] [< inputArg] [>|>> outputArg] [&]");
         return -1;
     }
+    // check if the input redir is there and if the file actually exists
     if (tempInput->inputRedir == 1 && access(tempInput->inputArg,R_OK) != 0) {
         fprintf(stdout, "%s\n", "Input file cannot be accessed or does not exist.");
         return -1;
@@ -301,21 +320,25 @@ int externalCommand(struct inputStruct * tempInput) {
             syserr("Error occured during executing command");
         case 0:
             set_child_parent();
+            // check for type of output redir
             if (tempInput->outputRedir == 1) {
                 freopen(tempInput->outputArg, "w+", stdout);
             }
             else if (tempInput->outputRedir == 2) {
                 freopen(tempInput->outputArg, "a+", stdout);
             }
+            // check for input redir
             if (tempInput->inputRedir == 1) { // input redirection
                 freopen(tempInput->inputArg, "r", stdin);
             }
-            if (execvp(tempInput->commandAndArgs[0],tempInput->commandAndArgs) == -1) {
+            // execute external command and check if that command is correct or not
+            if (execvp(tempInput->commandAndArgs[0],tempInput->commandAndArgs) == -1) { // failure of command
                 fprintf(stdout, "%s\n", "Command not found.");
-                _exit(EXIT_FAILURE);
+                _exit(EXIT_FAILURE); // exit the fork
             }
         default:
-            if ( tempInput->backgroundExec == 0) { // background execge
+            // check for background exec
+            if ( tempInput->backgroundExec == 0) { // background exec
                 waitpid(pid,&status,WUNTRACED);
             }
     }

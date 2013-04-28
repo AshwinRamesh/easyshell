@@ -8,7 +8,7 @@
     Input.c defines and parses the input into the shell
 */
 
-struct inputStruct * initialiseInputStruct(struct inputStruct * tempInput) {
+struct inputStruct * initialiseInputStruct(struct inputStruct * tempInput) { // initialise all the values of the inputStruct
     tempInput->numArgs = 0;
     tempInput->inputRedir = 0;
     tempInput->outputRedir = 0;
@@ -17,15 +17,14 @@ struct inputStruct * initialiseInputStruct(struct inputStruct * tempInput) {
     return tempInput;
 }
 
-// Parse input
-struct inputStruct * parseInput(char ** args, int numArgs) {
+struct inputStruct * parseInput(char ** args, int numArgs) { // Parses the input by user into a struct, which will simplify the process of selecting what commands to run and how
     struct inputStruct *tempInput = malloc(sizeof(struct inputStruct) *1);
     initialiseInputStruct(tempInput);
     int i;
     tempInput->command = args[0];
     tempInput->commandAndArgs[0] = args[0];
     for (i=1; i < numArgs; i++) {
-        if (!strcmp(args[i],">")){
+        if (!strcmp(args[i],">")){ // check for hard output redir
                 if (i == numArgs - 1) { // last argument to be read. means that format is wrong
                     tempInput->correctFormat = 0;
                     return tempInput;
@@ -38,7 +37,7 @@ struct inputStruct * parseInput(char ** args, int numArgs) {
                 tempInput->outputArg = args[i+1];
                 i = i + 1; // increment since we have read the next argument as the outputArg
         }
-        else if (!strcmp(args[i],">>")){
+        else if (!strcmp(args[i],">>")){ // check for soft output redir
                 if (i == numArgs - 1) { // last argument to be read. means that format is wrong
                     tempInput->correctFormat = 0;
                     return tempInput;
@@ -51,7 +50,7 @@ struct inputStruct * parseInput(char ** args, int numArgs) {
                 tempInput->outputArg = args[i+1];
                 i = i + 1; // increment since we have read the next argument as the outputArg
         }
-        else if (!strcmp(args[i],"<")){
+        else if (!strcmp(args[i],"<")){ // check for input redir
                 if (i == numArgs - 1) { // last argument to be read. means that format is wrong
                     tempInput->correctFormat = 0;
                     return tempInput;
@@ -68,14 +67,14 @@ struct inputStruct * parseInput(char ** args, int numArgs) {
                 tempInput->inputArg = args[i+1];
                 i = i + 1;
         }
-        else if (!strcmp(args[i],"&")){
+        else if (!strcmp(args[i],"&")){ // check for background exec
                 if (i != numArgs-1) { // background exec arg has to be last arg
                     tempInput->correctFormat = 0;
                     return tempInput;
                 }
                 tempInput->backgroundExec = 1;
         }
-        else {
+        else { // add to command arguments. but check if they are correctly formatted
                 if((tempInput->inputRedir != 0) || (tempInput->outputRedir != 0) || (tempInput->backgroundExec != 0)) { // these args have to be defined before all I/O and background exec args
                     tempInput->correctFormat = 0;
                     return tempInput;

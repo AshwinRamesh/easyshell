@@ -21,6 +21,16 @@ Command: <command> [arg1 arg2 ... argN] [< inputArg] [>|>> outputArg] [&]
 < : represents input redirection from user input to a given file
 & : represents background execution of a command
 
+* Input and Output redirection
+-------------------------------------------
+
+As described in the syntax section above, I/O redirection allows users to either move the results from a command to a file (output redirection) or instead of giving written commands, use a file to input those (input redirection). See Command Syntax section to see how to use I/O redirection.
+
+* Background Execution
+----------------------------------
+
+Background execution allows users to run commands in the background while still being able to feed other commands into the simpleshell. The syntax for this can be found in the Command Syntax section of this help file.
+
 * Change Directory <cd>
 ---------------------------
 Allows you to change a directory. Type "cd .." to back a directory. To get the current directory type "cd".

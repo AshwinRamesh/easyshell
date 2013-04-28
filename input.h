@@ -4,7 +4,7 @@
 #define MAX_BUFFER 1024                        // max line buffer
 #define MAX_ARGS 64                            // max # args
 /* Command Format: <command> [args...] [<] arg1 [> | >>] arg2 &*/
-struct inputStruct {
+struct inputStruct { // struct for the parsing of input given by users
     char * command;
     int numArgs;
     char ** args[MAX_ARGS];
