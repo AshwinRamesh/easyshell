@@ -3,10 +3,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <signal.h>
 #include "input.h"
 #include "utility.h"
-#include <termios.h>
-#include <signal.h>
 
 #define MAX_BUFFER 1024                        // max line buffer
 #define MAX_ARGS 64                            // max # args
